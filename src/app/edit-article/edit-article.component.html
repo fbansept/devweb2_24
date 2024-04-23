@@ -1,13 +1,36 @@
-<form class="formulaire">
-
+<form class="formulaire" (ngSubmit)="onSubmit()" [formGroup]="formulaire">
   <mat-form-field>
     <mat-label>Nom</mat-label>
-    <input matInput placeholder="Ex : Expresso" />
+    <input matInput placeholder="Ex : Expresso" formControlName="nom" />
+
+    @if(formulaire.get('nom')?.hasError('required')) {
+    <mat-error>Le nom est obligatoire</mat-error>
+    } @if(formulaire.get('nom')?.hasError('minlength')) {
+    <mat-error>Le nom doit avoir 3 caractères minimum</mat-error>
+    } @if(formulaire.get('nom')?.hasError('maxlength')) {
+    <mat-error>Le nom doit avoir 100 caractères maximum</mat-error>
+    }
   </mat-form-field>
 
   <mat-form-field>
     <mat-label>Description</mat-label>
-    <textarea matInput placeholder="Ex : Description du café ..."></textarea>
+    <textarea
+      matInput
+      placeholder="Ex : Description du café ..."
+      formControlName="description"
+    ></textarea>
   </mat-form-field>
-  
+
+  <mat-form-field>
+    <mat-label>Prix</mat-label>
+    <input [min]="prixMinimum" matInput type="number" formControlName="prix" />
+
+    @if(formulaire.get('prix')?.hasError('required')) {
+    <mat-error>Le prix est obligatoire</mat-error>
+    } @if(formulaire.get('prix')?.hasError('min')) {
+    <mat-error>Le prix doit être positif</mat-error>
+    }
+  </mat-form-field>
+
+  <button mat-raised-button color="primary">Ajouter l'article</button>
 </form>
