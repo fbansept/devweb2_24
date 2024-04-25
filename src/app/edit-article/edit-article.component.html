@@ -32,5 +32,29 @@
     }
   </mat-form-field>
 
-  <button mat-raised-button color="primary">Ajouter l'article</button>
+  <div style="display: flex; align-items: center">
+    <input
+      #selecteurFichier
+      style="display: none"
+      type="file"
+      (change)="onFichierSelectionne($event)"
+    />
+    <button
+      mat-mini-fab
+      color="primary"
+      (click)="selecteurFichier.click()"
+      type="button"
+    >
+      <mat-icon>attach_file</mat-icon>
+    </button>
+    <span style="margin-left: 0.5em">{{
+      this.fichierSelectionne
+        ? this.fichierSelectionne.name
+        : "Aucun fichier selectionné"
+    }}</span>
+  </div>
+
+  <button mat-raised-button color="primary" type="submit">
+    Ajouter l'article
+  </button>
 </form>

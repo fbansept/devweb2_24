@@ -8,7 +8,8 @@ export const routes: Routes = [
   { path: 'accueil', component: AccueilComponent },
   { path: 'connexion', component: ConnexionComponent },
 
-  { path:'ajout-article', component: EditArticleComponent},
+  { path: 'ajout-article', component: EditArticleComponent },
+  { path: 'modifier-article/:id', component: EditArticleComponent },
 
   { path: '', redirectTo: 'accueil', pathMatch: 'full' },
   { path: '**', component: PageNonTrouveComponent },
