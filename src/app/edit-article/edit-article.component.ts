@@ -48,21 +48,22 @@ export class EditArticleComponent {
     prix: [1, [Validators.required, Validators.min(this.prixMinimum)]],
   });
 
+  id: number | null = null;
+
   ngOnInit() {
     this.route.params.subscribe((parametresUrl) => {
       //si le paramètre id existe dans l'URL
       if (parametresUrl['id']) {
         //si le parametre est un nombre
         if (!isNaN(parametresUrl['id'])) {
-          const id: number = parametresUrl['id'];
+          this.id = parametresUrl['id'];
 
           this.http
             .get<Article>(
               //'http://localhost/backend-angular/article.php?id=' + id
-              `http://localhost/backend-angular/article.php?id=${id}`
+              `http://localhost/backend-angular/article.php?id=${this.id}`
             )
             .subscribe((article) => this.formulaire.patchValue(article));
-
         } else {
           alert(parametresUrl['id'] + " n'est pas un identifant valide");
         }
@@ -80,17 +81,20 @@ export class EditArticleComponent {
         donnees.append('image', this.fichierSelectionne);
       }
 
-      this.http
-        .post('http://localhost/backend-angular/ajout-article.php', donnees)
-        .subscribe({
-          next: (resultat) => this.router.navigateByUrl('/accueil'),
-          error: (resultat) =>
-            alert(
-              resultat.error.message
-                ? resultat.error.message
-                : 'Erreur inconnue, contactez votre administrateur'
-            ),
-        });
+      const url =
+        this.id == null
+          ? 'http://localhost/backend-angular/ajout-article.php'
+          : `http://localhost/backend-angular/modifier-article.php?id=${this.id}`;
+
+      this.http.post(url, donnees).subscribe({
+        next: (resultat) => this.router.navigateByUrl('/accueil'),
+        error: (resultat) =>
+          alert(
+            resultat.error.message
+              ? resultat.error.message
+              : 'Erreur inconnue, contactez votre administrateur'
+          ),
+      });
     }
   }
 
