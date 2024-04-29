@@ -48,7 +48,17 @@ export class EditArticleComponent {
     prix: [1, [Validators.required, Validators.min(this.prixMinimum)]],
   });
 
+  //identifiant de l'article (null si on en ajout)
   id: number | null = null;
+
+  //url de l'image sur la base de donnée
+  urlImage: string | null = null;
+
+  //passé à vrai lorsqu'une image existe sur la bdd, mais que l'utilisateur veurt la supprimer
+  imageSupprime: boolean = false;
+
+  //miniature du fichier qui vient d'etre selectionné
+  miniature: string | null = null;
 
   ngOnInit() {
     this.route.params.subscribe((parametresUrl) => {
@@ -63,7 +73,10 @@ export class EditArticleComponent {
               //'http://localhost/backend-angular/article.php?id=' + id
               `http://localhost/backend-angular/article.php?id=${this.id}`
             )
-            .subscribe((article) => this.formulaire.patchValue(article));
+            .subscribe((article) => {
+              this.formulaire.patchValue(article);
+              this.urlImage = article.image;
+            });
         } else {
           alert(parametresUrl['id'] + " n'est pas un identifant valide");
         }
@@ -75,7 +88,10 @@ export class EditArticleComponent {
     if (this.formulaire.valid) {
       const donnees: FormData = new FormData();
 
-      donnees.append('article', JSON.stringify(this.formulaire.value));
+      const article = this.formulaire.value;
+      article.imageSupprime = this.imageSupprime;
+
+      donnees.append('article', JSON.stringify(article));
 
       if (this.fichierSelectionne) {
         donnees.append('image', this.fichierSelectionne);
@@ -100,5 +116,29 @@ export class EditArticleComponent {
 
   onFichierSelectionne(evenement: any) {
     this.fichierSelectionne = evenement.target.files[0];
+    this.urlImage = null;
+    //on affecte la valeur null a l'input afin qu'un evenement (change) soit de nouveau lancé
+    //meme si il s'agit du meme fichier (dans le cas ou l'on aurait cliqué sur le bouton supprimé)
+    evenement.target.value = null;
+
+    //on recupere le fichier, on le tranforme en url puis on l'affecte à "miniature"
+    if (this.fichierSelectionne != null) {
+      let reader = new FileReader();
+
+      reader.onload = (e: any) => {
+        this.miniature = e.target.result;
+      };
+      reader.readAsDataURL(this.fichierSelectionne);
+    }
+  }
+
+  onSuppressionImage() {
+    if (this.urlImage != null) {
+      this.imageSupprime = true;
+    }
+
+    this.urlImage = null;
+    this.fichierSelectionne = null;
+    this.miniature = null;
   }
 }

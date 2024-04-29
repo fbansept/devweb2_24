@@ -33,6 +33,35 @@
   </mat-form-field>
 
   <div style="display: flex; align-items: center">
+
+    @if(urlImage) {
+
+    <img
+      style="width: 100px; object-fit: cover"
+      src="http://localhost/backend-angular/uploads/{{ urlImage }}"
+    />
+    } 
+
+    @if(miniature) {
+
+    <img
+      style="width: 100px; object-fit: cover"
+      [attr.src]="miniature"
+    />
+    } 
+    
+    
+    @if(urlImage || fichierSelectionne) {
+    <button
+      mat-mini-fab
+      color="warn"
+      (click)="onSuppressionImage()"
+      type="button"
+    >
+      <mat-icon>delete</mat-icon>
+    </button>
+    }
+
     <input
       #selecteurFichier
       style="display: none"
@@ -50,11 +79,13 @@
     <span style="margin-left: 0.5em">{{
       this.fichierSelectionne
         ? this.fichierSelectionne.name
+        : urlImage
+        ? "Modifier le fichier"
         : "Aucun fichier selectionné"
     }}</span>
   </div>
 
   <button mat-raised-button color="primary" type="submit">
-    Ajouter l'article
+    {{ id == null ? "Ajouter l'article" : "Modifier l'article" }}
   </button>
 </form>
